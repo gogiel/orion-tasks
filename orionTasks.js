@@ -11,6 +11,8 @@ window.onload = function() {
 	var provider = new orion.PluginProvider(headers);
 
 	var parseTodo = function(text) {
+		var fileName = $(window.parent.document.getElementsByClassName('currentLocation')[0]).html();
+	
 		var lines = text.split("\n");
 		
 		var output = [];
@@ -45,8 +47,6 @@ window.onload = function() {
 			output[lineNumber] = newLineContent;
 			newTodos[taskNumber] = comment;
 		});
-		console.log(newTodos);
-		console.log(oldTodos);
 		// send requests
 		
 		return output.join("\n");
@@ -54,6 +54,7 @@ window.onload = function() {
 
 	provider.registerServiceProvider("orion.edit.command", {
 		run: function(selectedText, text, selection) {
+			
 			var toFormat;
 			var selectionEmpty = selection.start === selection.end;
 			if (selectionEmpty) {
@@ -77,12 +78,11 @@ window.onload = function() {
 		key: ["t", true]
 	});
 
-
 	provider.registerServiceProvider("orion.page.link", {}, {
 		name: "TODO",
 		id: "orion.todo.pageLink.todo",
 		uriTemplate: "http://172.20.41.250/file/gogiel/orion-tasks/tasks.html,contentProvider=orion.pixlr.content"
 	});
-
+	
 	provider.connect();
 };
