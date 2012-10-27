@@ -48,7 +48,7 @@ function makeApiCall() {
     gapi.client.load('tasks', 'v1', function() {
         var request = gapi.client.tasks.tasklists.list();
         request.execute(function(resp) {
-        	console.log('RESP');
+			console.log('RESP');
 			console.log(resp);
 			asd = resp;
 			
@@ -56,14 +56,42 @@ function makeApiCall() {
 				alert('Sorry but your task list cannot be fetched...');
 			} else {
 				var lists = resp.result.items;
-				console.log('lists')
-					console.log(lists)
+				
+				//console.log('lists')
+				//console.log(lists)
+				
 				var list_titles = $.map(lists, function(val, index){
 					return val.title;
 				});
 				
-				addList('TODO List', list_titles);
-		
+				addListHeader('TODO LISTS')
+				
+				$.each(lists, function(idx ,list){
+					var list_id = list.id;
+					
+					//console.log('list id');
+					//console.log(list_id);
+					
+					var todo_request = gapi.client.tasks.tasks.list({tasklist: list_id});	
+					
+					todo_request.execute(function(resp, a) {
+								if(resp.error){
+									alert('Sorry but your task list cannot be fetched...');								
+								} else {
+									var todos = $.map(resp.items, function(todo, idx){
+										return todo.title;
+									});
+									
+									addList(list.title, todos);
+								}
+								
+						//console.log('todos:');
+						//console.log(resp);
+						//console.log(a);
+	
+					});
+				});
+				
 	            var heading = document.createElement('h1');
     	        var image = document.createElement('img');
             
@@ -81,14 +109,19 @@ function addListHeader(title){
 	$('<h1>').text(title).appendTo('body');
 }
 
+function addListSubHeader(title){
+	$('<h3>').text(title).appendTo('body');
+}
+
 function addList(name, items){
-console.log(items);
-	addListHeader(name);
+	addListSubHeader(name);
+	
 	var list = $('<ul>');
+	
 	$.each(items, function(idx, val){
 		var item = $('<li>').text(val);
 		list.append(item);
 	});
-	console.log(list)
+	
 	list.appendTo('body');
 }
