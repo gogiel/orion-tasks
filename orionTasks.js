@@ -70,11 +70,13 @@ window.onload = function() {
 	provider.registerServiceProvider("orion.edit.command", {
 		run: function(selectedText, text, selection) {	
 			authFunc();
+			GoogleTasks.getLists(function(lists) {console.log('callback'); console.log(lists);});
+			
 //			checkAuth(function(){gapi.client.load('tasks', 'v1', function() {
 //        		var request = gapi.client.tasks.tasklists.list();
 //        		request.execute(function(resp) {console.log(resp);});
 //        	});});
-			var toFormat;
+						var toFormat;
 			var selectionEmpty = selection.start === selection.end;
 			if (selectionEmpty) {
 				toFormat = text;

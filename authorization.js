@@ -16,6 +16,8 @@ var apiKey = 'AIzaSyCwfWjVvtQhnOa3-zpTAHnbbADZGqSdF4s';
 var scopes = 'https://www.googleapis.com/auth/tasks';
 
 // Use a button to handle authentication the first time.
+var _orion_super_firstCallback = function(){};
+
 function handleClientLoad() {
 	console.log('handleClientLoad');
     gapi.client.setApiKey(apiKey);
@@ -23,7 +25,7 @@ function handleClientLoad() {
 }
 
 function checkAuth(callback) {
-	if(!callback) callback = function(){};
+	if(!callback) callback = function(){console.log('pusty callback');};
 	console.log('check auth');
 	gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: true}, callback);
 }
