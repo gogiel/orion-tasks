@@ -63,8 +63,9 @@ window.onload = function() {
 					
 					
 					var storedTask = todoItemsById[number];
+					console.log(storedTask);
 					if(storedTask)
-					oldTodos[number] = {comment: comment, lineNumber: lineNumber+1, id: storedTask.id};
+					oldTodos[number] = {title: 'ID-' + i + '[' + t.lineNumber + ']' + t.comment, id: storedTask.id};
 				}
 				if (!number) {
 					newTodosLines.push(lineNumber);

@@ -80,11 +80,23 @@ var GoogleTasks = {
 		});
 	},
 	updateAndAddTodos: function(list, newTodos, oldTodos, callback) {
-	console.log('updateAndAddTodos');
-	console.log(oldTodos);
 		GoogleTasks.addTodos(list, newTodos, function(){
 			console.log('za chwile bedzie updatowac:');
-			console.log(oldTodos);
+			for(var i in oldTodos) {
+				var t = oldTodos[i];
+				var requestBody = {
+					tasklist: list,
+					task: t.id,
+					resource: {
+							title: todo.title
+					}
+				}
+				
+				var request = gapi.client.tasks.tasks.insert(requestBody);
+					request.execute(function(resp) {
+						
+					});
+			}
 		});
 	},
 	getAll: function(callback) {
