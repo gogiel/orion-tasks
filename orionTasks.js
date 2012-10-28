@@ -10,6 +10,8 @@ authFunc = function(){};
 
 });
 
+// TODO DEADLINE
+
 
 window.onload = function() {
 	//window.parent.document.body.innerHTML += '<script src="authorization.js"></script>';
