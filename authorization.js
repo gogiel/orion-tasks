@@ -29,3 +29,4 @@ function checkAuth(callback) {
 	console.log('check auth');
 	gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: true}, callback);
 }
+

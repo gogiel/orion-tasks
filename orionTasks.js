@@ -9,6 +9,7 @@ gapi.load("client",{callback:window["handleClientLoad"],_c:{"jsl":{"ci":{"servic
 authFunc = function(){};
 
 });
+
 window.onload = function() {
 	//window.parent.document.body.innerHTML += '<script src="authorization.js"></script>';
 	//window.parent.document.body.innerHTML += '<script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>';
