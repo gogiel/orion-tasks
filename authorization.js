@@ -5,10 +5,6 @@
 // where you will be running the script.
 var clientId = '81393392510.apps.googleusercontent.com';
 
-// TODO-3 DEADLINE
-// TODO-5 Lorem Ipsum
-// TODO-6 Lorem Ipsum 2
-
 // Enter the API key from the Google Develoepr Console - to handle any unauthenticated
 // requests in the code.
 // The provided key works for this sample only when run from
@@ -20,22 +16,16 @@ var apiKey = 'AIzaSyCwfWjVvtQhnOa3-zpTAHnbbADZGqSdF4s';
 var scopes = 'https://www.googleapis.com/auth/tasks';
 
 // Use a button to handle authentication the first time.
-var _orion_super_firstCallback = function() {};
+var _orion_super_firstCallback = function(){};
 
 function handleClientLoad() {
 	console.log('handleClientLoad');
-	gapi.client.setApiKey(apiKey);
-	setTimeout(checkAuth, 1);
+    gapi.client.setApiKey(apiKey);
+    setTimeout(checkAuth,1);
 }
 
 function checkAuth(callback) {
-	if (!callback) callback = function() {
-		console.log('pusty callback');
-	};
+	if(!callback) callback = function(){console.log('pusty callback');};
 	console.log('check auth');
-	gapi.auth.authorize({
-		client_id: clientId,
-		scope: scopes,
-		immediate: true
-	}, callback);
+	gapi.auth.authorize({client_id: clientId, scope: scopes, immediate: true}, callback);
 }

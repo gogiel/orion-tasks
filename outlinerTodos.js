@@ -416,7 +416,6 @@ headID.appendChild(cssNode);
 	}
 
 	provider.registerServiceProvider("orion.edit.outliner", outlineService, {
-		contentType: ["application/javascript"],
 		name: "TODO List",
 		id: "orion.edit.outliner.todos"
 	});
