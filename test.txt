@@ -1,0 +1,3 @@
+kod // TODO-1 komentarz
+abc // TODO-2 xyz
+ ags // TODO-3 d

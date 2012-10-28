@@ -9,12 +9,9 @@ gapi.load("client",{callback:window["handleClientLoad"],_c:{"jsl":{"ci":{"servic
 authFunc = function(){};
 
 });
-
-
 window.onload = function() {
 	//window.parent.document.body.innerHTML += '<script src="authorization.js"></script>';
 	//window.parent.document.body.innerHTML += '<script src="https://apis.google.com/js/client.js?onload=handleClientLoad"></script>';
-
 	//plugin metadata  
 	var headers = {
 		name: "Orion Tasks",
@@ -26,33 +23,56 @@ window.onload = function() {
 	var provider = new orion.PluginProvider(headers);
 
 	var parseTodo = function(text) {
+		console.log('parsing');
 		var fileName = $(window.parent.document.getElementsByClassName('currentLocation')[0]).html();
-	
-		var lines = text.split("\n");
+		var todos = _orionReadyLists;
+		var orionTodoList = _.find(todos, function(t) {
+			return t.title === "[ORION]"
+		});
+		var todo_list_id = orionTodoList.id;
+		var todoItems = orionTodoList._OrionItems;
+		var todoItemsById = {};
+		var idRegexp = /ID-(.*)\[/;
+		_.each(todoItems, function(item) {
+			match = idRegexp.exec(item.title);
+			if(match) {
+				todoItemsById[match[1]] = item;	
+			}
+		});
 		
+		
+		var lines = text.split("\n");
+
 		var output = [];
-		var newTodos = {}, oldTodos = {};
+		var newTodos = {},
+			oldTodos = {};
 		var newTodosLines = [];
 		var patt = new RegExp('(.*)// TODO(-[0-9])? (.*)');
 		var maxNumber = 0;
 		_.each(lines, function(line, lineNumber) {
 			var match = patt.exec(line);
 			if (match) {
+				console.log(match);
 				var before = match[1];
 				var number = match[2];
 				var comment = match[3];
-				if(number) {
-					number = parseInt(number.replace('-',''));
-					if(number > maxNumber) maxNumber = number;
-					oldTodos[number] = comment;
+				if (number) {
+					number = parseInt(number.replace('-', ''));
+					if (number > maxNumber) maxNumber = number;
+					// find ID
+					
+					
+					var storedTask = todoItemsById[number];
+					if(storedTask)
+					oldTodos[number] = {comment: comment, lineNumber: lineNumber+1, id: storedTask.id};
 				}
-				if(!number) {
+				if (!number) {
 					newTodosLines.push(lineNumber);
 				}
 			}
 			output.push(line);
 		});
-		_.each(newTodosLines, function(lineNumber){
+		_.each(newTodosLines, function(lineNumber) {
 			var originalLine = output[lineNumber] + '';
 			var match = patt.exec(originalLine);
 			var before = match[1];
@@ -60,23 +80,44 @@ window.onload = function() {
 			var taskNumber = ++maxNumber;
 			var newLineContent = before + '// TODO-' + taskNumber + ' ' + comment;
 			output[lineNumber] = newLineContent;
-			newTodos[taskNumber] = comment;
+			newTodos[taskNumber] = {
+				comment: comment,
+				lineNumber: lineNumber+1
+			};
 		});
-		// send requests
-		
+
+		var fileTask = _.find(todoItems, function(t) {
+			return t.title === fileName
+		});
+
+		var syncTodos = function(parentId) {
+			var tmpTodos = [];
+			console.log('parentId:' + parentId);
+			for (var i in newTodos) {
+				var t = newTodos[i];
+				tmpTodos.push({title: 'ID-' + i + '[' + t.lineNumber + ']' + t.comment, parent: parentId});
+			}
+			GoogleTasks.updateAndAddTodos(todo_list_id, tmpTodos, oldTodos);
+		}
+		if (fileTask) {
+			syncTodos(fileTask.id);
+		} else {
+		// oldTodos
+			GoogleTasks.addTodo(todo_list_id, fileName, undefined, function(resp) {
+				syncTodos(resp.id);
+			});
+		}
 		return output.join("\n");
 	};
-
 	provider.registerServiceProvider("orion.edit.command", {
-		run: function(selectedText, text, selection) {	
+		run: function(selectedText, text, selection) {
 			authFunc();
-			GoogleTasks.getLists(function(lists) {console.log('callback'); console.log(lists);});
-			
-//			checkAuth(function(){gapi.client.load('tasks', 'v1', function() {
-//        		var request = gapi.client.tasks.tasklists.list();
-//        		request.execute(function(resp) {console.log(resp);});
-//        	});});
-						var toFormat;
+			GoogleTasks.getLists(function(lists) {
+				_orionReadyLists = lists
+			});
+			if (!_orionReadyLists) return;
+
+			var toFormat;
 			var selectionEmpty = selection.start === selection.end;
 			if (selectionEmpty) {
 				toFormat = text;
@@ -92,7 +133,6 @@ window.onload = function() {
 				return formatted;
 			}
 		}
-
 	}, {
 		name: "Sync TODOs",
 		img: "/images/gear.gif",
@@ -104,6 +144,6 @@ window.onload = function() {
 		id: "orion.todo.pageLink.todo",
 		uriTemplate: "http://172.20.41.250/file/gogiel/orion-tasks/tasks.html,contentProvider=orion.pixlr.content"
 	});
-	
+
 	provider.connect();
 };
