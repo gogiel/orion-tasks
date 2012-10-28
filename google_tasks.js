@@ -60,6 +60,8 @@ var GoogleTasks = {
 		});
 	},
 	addTodos: function(list, todos, callback) {
+		console.log(todos);
+		console.log('todos');
 		checkAuth(function() {
 			gapi.client.load('tasks', 'v1', function() {
 				_.each(todos, function(todo) {
@@ -87,14 +89,16 @@ var GoogleTasks = {
 				var requestBody = {
 					tasklist: list,
 					task: t.id,
+					parent: t.parent,
 					resource: {
-							title: todo.title
+							title: t.title
 					}
-				}
-				
-				var request = gapi.client.tasks.tasks.insert(requestBody);
+				};
+				console.log('update:');
+				console.log(requestBody);
+				var request = gapi.client.tasks.tasks.update(requestBody);
 					request.execute(function(resp) {
-						
+						console.log(resp);
 					});
 			}
 		});
