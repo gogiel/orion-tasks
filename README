@@ -1,0 +1,16 @@
+Google Task Orion plugin made at Hackathon in 10 hours.
+http://wiki.eclipse.org/Orion_Hackaton_Krakow_2012
+
+At first use user has to authenticate using tasks.html
+Code is buggy and messy (callback hell, non-objective, copy-pastes), because it was meant to work ASAP.
+Most of the time (about 3-4 hours) we spent struggling with authenticating at Google and it still needs some repair. Currently every request is wrapped in authenticate and api.load callbacks so it's very uneffective, but at least worked.
+We also found bug in Google Tasks API - update action doesn't work and always returns 400.
+
+Our thoughts:
+* Orion API callbacks should be provided with more data. We made dirty hack and used window.parent object to obtain file name from breadcrumb
+* It's unclear when iframe with plugin actually loads
+* very small plugin API. For example it's not possible to make a command (button) that always works on whole file
+* there's no way (or it's not documeneted) how to postopone returning of API command
+* there's no way to block editor (to wait for API call success)
+* there's no way to create own page without hacking orion.core and copying files
+* there's no standard way of plugins/editor communication (we wanted to trigger event to refresh outline)
